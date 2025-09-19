@@ -13,10 +13,19 @@ class TodoController extends Controller
     public function index(Request $request)
     {
         $token = $request->session()->get('api_token');
+        $user = $request->session()->get('user');
+        $userId = $user['id'] ?? null;
 
-        $response = Http::withHeaders([
-            'Authorization' => "Bearer $token",
-        ])->get('https://dummyjson.com/todos');
+        // Obtiene el usuario id del usuario logueado y extrae sus todos 
+        if ($userId) {
+            $response = Http::withHeaders([
+                'Authorization' => "Bearer $token",
+            ])->get('https://dummyjson.com/todos/user/' . $userId);
+        } else {
+            $response = Http::withHeaders([
+                'Authorization' => "Bearer $token",
+            ])->get('https://dummyjson.com/todos');
+        }
 
         $todos = $response->successful() ? $response['todos'] : [];
 
