@@ -60,20 +60,20 @@
                             <!-- Formulario de login -->
                             <div class="card border-0 shadow-sm">
                                 <div class="card-body p-4">
-                                    <form action="{{ route('auth.login') }}" method="POST">
+                                    <form action="{{ url('login') }}" method="POST">
                                         @csrf
                                         
                                         <!-- Email -->
                                         <div class="mb-4">
-                                            <label for="email" class="form-label text-dark fw-medium">
-                                                <i class="fas fa-envelope text-primary me-2"></i>Correo electrónico
+                                            <label for="username" class="form-label text-dark fw-medium">
+                                                <i class="fas fa-envelope text-primary me-2"></i>Nombre de usuario
                                             </label>
-                                            <input type="email" 
-                                                   name="email" 
-                                                   id="email" 
+                                            <input type="username" 
+                                                   name="username" 
+                                                   id="username" 
                                                    class="form-control form-control-lg border-light" 
-                                                   placeholder="tu@email.com"
-                                                   value="{{ old('email') }}"
+                                                   placeholder="emilys"
+                                                   value="{{ old('username') }}"
                                                    required>
                                         </div>
 
@@ -86,18 +86,8 @@
                                                    name="password" 
                                                    id="password" 
                                                    class="form-control form-control-lg border-light" 
-                                                   placeholder="••••••••"
+                                                   placeholder="emilyspass"
                                                    required>
-                                        </div>
-
-                                        <!-- Remember me -->
-                                        <div class="mb-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                                                <label class="form-check-label text-muted" for="remember">
-                                                    Recordar sesión
-                                                </label>
-                                            </div>
                                         </div>
 
                                         <!-- Login button -->
@@ -106,21 +96,6 @@
                                         </button>
                                     </form>
                                 </div>
-                            </div>
-
-                            <!-- Footer links -->
-                            <div class="text-center mt-4">
-                                <p class="text-muted mb-2">¿No tienes una cuenta?</p>
-                                <a href="{{ route('auth.register') }}" class="btn btn-outline-primary fw-medium">
-                                    <i class="fas fa-user-plus me-2"></i>Crear cuenta nueva
-                                </a>
-                            </div>
-
-                            <!-- Forgot password link -->
-                            <div class="text-center mt-3">
-                                <a href="#" class="text-muted text-decoration-none small">
-                                    ¿Olvidaste tu contraseña?
-                                </a>
                             </div>
                         </div>
                     </div>
