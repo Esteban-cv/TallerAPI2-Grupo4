@@ -14,11 +14,6 @@ class AuthController extends Controller
      */
     public function index()
     {
-        if(Session::has('token'))
-        {
-            return redirect()->route('index');
-        }
-        
         return view('auth.login');
     }
 
@@ -75,26 +70,32 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        //ulr = url_base + /endpoint_servicio
-        $url = env('URL_BASE_API', "http://localhost:8000");
-        $response = Http::acceptJson()->post($url . '/auth/login', [
-            'username' => $request->username, //$request['username']
-            'password' => $request->password
+        $credentials = $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        if($response->status() == Response::HTTP_OK)
-        {
-            $jsonResponse = json_decode($response);
-            Session::put('user', $jsonResponse->user);
-            Session::put('token', $jsonResponse->token);
-            return redirect()->route('welcome');
-        }
-        else
-        {
-            return back()->withErrors([
-                'username' => 'Credenciales incorrectas'
-            ])->onlyInput('username'); 
-        }          
+        $response = Http::post('https://dummyjson.com/auth/login', [
+            'username' => $credentials['username'],
+            'password' => $credentials['password'],
+            'expiresInMins' => 60,
+        ]);
+
+        if ($response->successful() && isset($response['accessToken'])) {
+            // Guardar token y usuario en sesión
+            $request->session()->put('api_token', $response['accessToken']);
+            $request->session()->put('user', $response->json());
+
+            return redirect()->intended('/');
+        } else {
+            return back()->withErrors(['login' => 'Credenciales inválidas']);
+        }      
+    }
+
+    public function logout(Request $request)
+    {
+        $request->session()->forget(['api_token', 'user']);
+        return redirect()->route('login');
     }
 
 }
