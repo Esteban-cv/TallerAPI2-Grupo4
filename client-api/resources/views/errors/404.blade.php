@@ -26,20 +26,6 @@
                     </div>
                     <h2 class="fw-bold mb-3">Página Perdida</h2>
                     <p class="lead mb-4">Parece que la página que buscas se ha extraviado en el espacio digital</p>
-                    <div class="d-flex justify-content-center gap-4 text-white-50">
-                        <div class="text-center">
-                            <i class="fas fa-map fa-2x mb-2"></i>
-                            <p class="small">Navegación</p>
-                        </div>
-                        <div class="text-center">
-                            <i class="fas fa-compass fa-2x mb-2"></i>
-                            <p class="small">Orientación</p>
-                        </div>
-                        <div class="text-center">
-                            <i class="fas fa-route fa-2x mb-2"></i>
-                            <p class="small">Ruta correcta</p>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -58,72 +44,13 @@
                                 <p class="text-muted lead">La página que buscas no existe o ha sido movida</p>
                             </div>
 
-                            <!-- Buscador -->
-                            <div class="card border-0 shadow-sm mb-4">
-                                <div class="card-body p-4">
-                                    <h5 class="text-dark fw-medium mb-3">
-                                        <i class="fas fa-search text-primary me-2"></i>
-                                        ¿Qué estabas buscando?
-                                    </h5>
-                                    <div class="input-group input-group-lg">
-                                        <input type="text" class="form-control border-light" placeholder="Buscar en TodoApp...">
-                                        <button class="btn btn-primary" type="button">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Sugerencias -->
-                            <div class="card border-0 shadow-sm mb-4">
-                                <div class="card-body p-4">
-                                    <h5 class="text-dark fw-medium mb-3">
-                                        <i class="fas fa-lightbulb text-primary me-2"></i>
-                                        Páginas populares
-                                    </h5>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <a href="{{ url('/') }}" class="text-decoration-none d-block p-2 rounded hover-bg-light mb-2">
-                                                <i class="fas fa-home text-primary me-2"></i>
-                                                <span class="text-dark">Inicio</span>
-                                            </a>
-                                            <a href="#" class="text-decoration-none d-block p-2 rounded hover-bg-light mb-2">
-                                                <i class="fas fa-tasks text-primary me-2"></i>
-                                                <span class="text-dark">Mis Tareas</span>
-                                            </a>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <a href="#" class="text-decoration-none d-block p-2 rounded hover-bg-light mb-2">
-                                                <i class="fas fa-plus text-primary me-2"></i>
-                                                <span class="text-dark">Nueva Tarea</span>
-                                            </a>
-                                            <a href="#" class="text-decoration-none d-block p-2 rounded hover-bg-light mb-2">
-                                                <i class="fas fa-user text-primary me-2"></i>
-                                                <span class="text-dark">Mi Perfil</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- Botones de acción -->
                             <div class="text-center">
                                 <a href="{{ url('/') }}" class="btn btn-primary btn-lg fw-medium me-3 mb-2">
                                     <i class="fas fa-home me-2"></i>Volver al Inicio
                                 </a>
-                                <button onclick="history.back()" class="btn btn-outline-primary btn-lg fw-medium mb-2">
-                                    <i class="fas fa-arrow-left me-2"></i>Página Anterior
-                                </button>
                             </div>
 
-                            <!-- Footer -->
-                            <div class="text-center mt-4">
-                                <p class="text-muted mb-2">¿El problema persiste?</p>
-                                <a href="#" class="text-decoration-none">
-                                    <i class="fas fa-bug text-primary me-2"></i>
-                                    <span class="text-primary">Reportar problema</span>
-                                </a>
-                            </div>
                         </div>
                     </div>
                 </div>

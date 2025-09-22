@@ -74,10 +74,6 @@
                                             <i class="fas fa-check-circle text-success me-2"></i>
                                             Esta función está restringida a ciertos usuarios
                                         </li>
-                                        <li class="mb-0">
-                                            <i class="fas fa-check-circle text-success me-2"></i>
-                                            Contacta al administrador si necesitas acceso
-                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -86,18 +82,6 @@
                             <div class="text-center">
                                 <a href="{{ url('/') }}" class="btn btn-primary btn-lg fw-medium me-3 mb-2">
                                     <i class="fas fa-home me-2"></i>Volver al Inicio
-                                </a>
-                                <button onclick="history.back()" class="btn btn-outline-primary btn-lg fw-medium mb-2">
-                                    <i class="fas fa-arrow-left me-2"></i>Página Anterior
-                                </button>
-                            </div>
-
-                            <!-- Información adicional -->
-                            <div class="text-center mt-4">
-                                <p class="text-muted mb-2">¿Necesitas ayuda?</p>
-                                <a href="#" class="text-decoration-none">
-                                    <i class="fas fa-envelope text-primary me-2"></i>
-                                    <span class="text-primary">Contactar Soporte</span>
                                 </a>
                             </div>
                         </div>
