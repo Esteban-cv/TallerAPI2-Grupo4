@@ -26,20 +26,6 @@
                     </div>
                     <h2 class="fw-bold mb-3">Organiza tu día</h2>
                     <p class="lead mb-4">Gestiona tus tareas de manera eficiente y mantén el control de tus proyectos</p>
-                    <div class="d-flex justify-content-center gap-4 text-white-50">
-                        <div class="text-center">
-                            <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <p class="small">Tareas completadas</p>
-                        </div>
-                        <div class="text-center">
-                            <i class="fas fa-clock fa-2x mb-2"></i>
-                            <p class="small">Recordatorios</p>
-                        </div>
-                        <div class="text-center">
-                            <i class="fas fa-users fa-2x mb-2"></i>
-                            <p class="small">Colaboración</p>
-                        </div>
-                    </div>
                 </div>
             </div>
 
