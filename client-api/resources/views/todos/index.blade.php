@@ -23,26 +23,14 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
+            <a class="navbar-brand fw-bold" href="{{ route('home') }}">
                 <i class="fas fa-clipboard-list me-2"></i>TodoApp
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <i class="fas fa-home me-1"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-tasks me-1"></i>Mis Tareas
-                        </a>
-                    </li>
-                </ul>
-                <form method="POST" action="{{ route('logout') }}" class="d-flex">
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn btn-outline-light">
                         <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
@@ -53,6 +41,21 @@
     </nav>
 
     <div class="container my-4">
+        <!-- Alertas -->
+        @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        @endif
+
+        @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        @endif
+
         <!-- Header -->
         <div class="row mb-4">
             <div class="col-12">
@@ -72,7 +75,7 @@
                             <i class="fas fa-list-ul fa-2x"></i>
                         </div>
                         <h5 class="card-title text-dark fw-medium">Total de Tareas</h5>
-                        <h2 class="text-primary fw-bold mb-0" id="totalTasks">{{ count($todos) }}</h2>
+                        <h2 class="text-primary fw-bold mb-0">{{ count($todos) }}</h2>
                     </div>
                 </div>
             </div>
@@ -83,7 +86,7 @@
                             <i class="fas fa-clock fa-2x"></i>
                         </div>
                         <h5 class="card-title text-dark fw-medium">Pendientes</h5>
-                        <h2 class="text-warning fw-bold mb-0" id="pendingTasks">
+                        <h2 class="text-warning fw-bold mb-0">
                             {{ count(array_filter($todos, function($todo) { return !$todo['completed']; })) }}
                         </h2>
                     </div>
@@ -96,7 +99,7 @@
                             <i class="fas fa-check-circle fa-2x"></i>
                         </div>
                         <h5 class="card-title text-dark fw-medium">Completadas</h5>
-                        <h2 class="text-success fw-bold mb-0" id="completedTasks">
+                        <h2 class="text-success fw-bold mb-0">
                             {{ count(array_filter($todos, function($todo) { return $todo['completed']; })) }}
                         </h2>
                     </div>
@@ -108,17 +111,13 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-0 pb-0">
-                        <h5 class="text-dark fw-medium mb-0">
-                            <i class="fas fa-plus text-primary me-2"></i>Agregar Nueva Tarea
-                        </h5>
-                    </div>
                     <div class="card-body">
-                        <form id="addTaskForm">
+                        <form method="POST" action="{{ route('todos.store') }}">
+                            @csrf
                             <div class="row">
                                 <div class="col-md-8 mb-2">
                                     <input type="text" class="form-control form-control-lg border-light"
-                                        id="newTask" placeholder="Escribe tu nueva tarea..." required>
+                                        name="todo" placeholder="Escribe tu nueva tarea..." required>
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <button type="submit" class="btn btn-primary btn-lg w-100 fw-medium">
@@ -137,11 +136,17 @@
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0 pb-0">
-                        <h5 class="text-dark fw-medium mb-0">
-                            <i class="fas fa-table text-primary me-2"></i>Todas las Tareas
-                        </h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="text-dark fw-medium mb-0">
+                                <i class="fas fa-table text-primary me-2"></i>Todas las Tareas
+                            </h5>
+                            <a href="{{ route('home') }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-sync-alt me-1"></i>Actualizar
+                            </a>
+                        </div>
                     </div>
                     <div class="card-body p-0">
+                        @if(!empty($todos))
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
@@ -152,10 +157,10 @@
                                         <th class="border-0 text-dark fw-medium text-center">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tasksTable">
-                                    @foreach($todos as $index => $todo)
+                                <tbody>
+                                    @foreach($todos as $todo)
                                     <tr>
-                                        <td class="text-muted">{{ $todo['id'] ?? $index + 1 }}</td>
+                                        <td class="text-muted">{{ $todo['id'] }}</td>
                                         <td class="text-dark">{{ $todo['todo'] }}</td>
                                         <td>
                                             @if($todo['completed'])
@@ -169,74 +174,113 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <button class="btn btn-outline-primary btn-sm me-2"
-                                                onclick="editTask({{ $todo['id'] ?? $index + 1 }}, '{{ $todo['todo'] }}', {{ $todo['completed'] ? 'true' : 'false' }})"
-                                                data-bs-toggle="modal" data-bs-target="#editModal">
+                                            <!-- Toggle Status Button -->
+                                            <form method="POST" action="{{ route('todos.toggle', $todo['id']) }}" class="d-inline">
+                                                @csrf
+                                                <input type="hidden" name="_method" value="PATCH">
+                                                <button type="submit" class="btn btn-outline-success btn-sm me-1" title="Cambiar estado">
+                                                    <i class="fas fa-{{ $todo['completed'] ? 'undo' : 'check' }}"></i>
+                                                </button>
+                                            </form>
+
+                                            <!-- Edit Button -->
+                                            <button class="btn btn-outline-primary btn-sm me-1"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editModal{{ $todo['id'] }}"
+                                                title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-outline-danger btn-sm"
-                                                onclick="deleteTask({{ $todo['id'] ?? $index + 1 }})">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+
+                                            <!-- Delete Button -->
+                                            <form method="POST" action="{{ route('todos.destroy', $todo['id']) }}"
+                                                class="d-inline"
+                                                onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta tarea?')">
+                                                @csrf
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
+
+                                    <!-- Edit Modal for each todo -->
+                                    <div class="modal fade" id="editModal{{ $todo['id'] }}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content border-0 shadow">
+                                                <div class="modal-header border-0 pb-0">
+                                                    <h5 class="modal-title text-dark fw-bold">
+                                                        <i class="fas fa-edit text-primary me-2"></i>Editar Tarea
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <form method="POST" action="{{ route('todos.update', $todo['id']) }}">
+                                                    @csrf
+                                                    <input type="hidden" name="_method" value="PUT">
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label for="todo{{ $todo['id'] }}" class="form-label text-dark fw-medium">
+                                                                <i class="fas fa-tasks text-primary me-1"></i>Descripción de la tarea
+                                                            </label>
+                                                            <textarea class="form-control border-light"
+                                                                id="todo{{ $todo['id'] }}"
+                                                                name="todo"
+                                                                rows="3"
+                                                                required>{{ $todo['todo'] }}</textarea>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label text-dark fw-medium">
+                                                                <i class="fas fa-check-square text-primary me-1"></i>Estado
+                                                            </label>
+                                                            <div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input"
+                                                                        type="radio"
+                                                                        name="completed"
+                                                                        id="statusPending{{ $todo['id'] }}"
+                                                                        value="0"
+                                                                        {{ !$todo['completed'] ? 'checked' : '' }}>
+                                                                    <label class="form-check-label text-warning" for="statusPending{{ $todo['id'] }}">
+                                                                        <i class="fas fa-clock me-1"></i>Pendiente
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input"
+                                                                        type="radio"
+                                                                        name="completed"
+                                                                        id="statusCompleted{{ $todo['id'] }}"
+                                                                        value="1"
+                                                                        {{ $todo['completed'] ? 'checked' : '' }}>
+                                                                    <label class="form-check-label text-success" for="statusCompleted{{ $todo['id'] }}">
+                                                                        <i class="fas fa-check me-1"></i>Completado
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer border-0">
+                                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                            <i class="fas fa-times me-1"></i>Cancelar
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="fas fa-save me-1"></i>Guardar Cambios
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
+                        @else
+                        <div class="text-center py-4">
+                            <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No hay tareas disponibles. ¡Agrega tu primera tarea!</p>
+                        </div>
+                        @endif
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title text-dark fw-bold">
-                        <i class="fas fa-edit text-primary me-2"></i>Editar Tarea
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editTaskForm">
-                        <input type="hidden" id="editTaskId">
-                        <div class="mb-3">
-                            <label for="editTaskText" class="form-label text-dark fw-medium">
-                                <i class="fas fa-tasks text-primary me-1"></i>Descripción de la tarea
-                            </label>
-                            <textarea class="form-control border-light" id="editTaskText" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-dark fw-medium">
-                                <i class="fas fa-check-square text-primary me-1"></i>Estado
-                            </label>
-                            <div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="editTaskStatus" id="statusPending" value="false">
-                                    <label class="form-check-label text-warning" for="statusPending">
-                                        <i class="fas fa-clock me-1"></i>Pendiente
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="editTaskStatus" id="statusCompleted" value="true">
-                                    <label class="form-check-label text-success" for="statusCompleted">
-                                        <i class="fas fa-check me-1"></i>Completado
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i>Cancelar
-                    </button>
-                    <button type="button" class="btn btn-primary" onclick="updateTask()">
-                        <i class="fas fa-save me-1"></i>Guardar Cambios
-                    </button>
                 </div>
             </div>
         </div>
@@ -244,88 +288,6 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        // Add new task
-        document.getElementById('addTaskForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const taskText = document.getElementById('newTask').value.trim();
-
-            if (taskText) {
-                // Simulate API call
-                showAlert('success', 'Tarea agregada exitosamente!');
-                document.getElementById('newTask').value = '';
-
-                // Here you would make the actual API call to add the task
-                // fetch('https://dummyjson.com/todos/add', {...})
-            }
-        });
-
-        // Edit task function
-        function editTask(id, text, completed) {
-            document.getElementById('editTaskId').value = id;
-            document.getElementById('editTaskText').value = text;
-
-            if (completed) {
-                document.getElementById('statusCompleted').checked = true;
-            } else {
-                document.getElementById('statusPending').checked = true;
-            }
-        }
-
-        // Update task function
-        function updateTask() {
-            const id = document.getElementById('editTaskId').value;
-            const text = document.getElementById('editTaskText').value.trim();
-            const completed = document.querySelector('input[name="editTaskStatus"]:checked').value === 'true';
-
-            if (text) {
-                // Simulate API call
-                showAlert('info', `Tarea #${id} actualizada exitosamente!`);
-
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-                modal.hide();
-
-                // Here you would make the actual API call to update the task
-                // fetch(`https://dummyjson.com/todos/${id}`, {...})
-            }
-        }
-
-        // Delete task function
-        function deleteTask(id) {
-            if (confirm('¿Estás seguro de que deseas eliminar esta tarea?')) {
-                // Simulate API call
-                showAlert('warning', `Tarea #${id} eliminada exitosamente!`);
-
-                // Here you would make the actual API call to delete the task
-                // fetch(`https://dummyjson.com/todos/${id}`, {method: 'DELETE'})
-            }
-        }
-
-        // Show alert function
-        function showAlert(type, message) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-            alertDiv.style.top = '20px';
-            alertDiv.style.right = '20px';
-            alertDiv.style.zIndex = '9999';
-            alertDiv.style.minWidth = '300px';
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-
-            document.body.appendChild(alertDiv);
-
-            // Auto remove after 3 seconds
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 3000);
-        }
-    </script>
 </body>
 
 </html>
