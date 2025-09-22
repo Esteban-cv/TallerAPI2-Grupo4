@@ -33,35 +33,32 @@ class TodoController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'todo' => 'required|string|max:255',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $token = $request->session()->get('api_token');
+        $user = $request->session()->get('user');
+        $userId = $user['id'] ?? 1;
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer $token",
+            'Content-Type' => 'application/json',
+        ])->post('https://dummyjson.com/todos/add', [
+            'todo' => $request->todo,
+            'completed' => false,
+            'userId' => $userId,
+        ]);
+
+        if ($response->successful()) {
+            return redirect()->route('home')->with('success', 'Tarea agregada exitosamente!');
+        }
+
+        return redirect()->route('home')->with('error', 'Error al agregar la tarea');
     }
 
     /**
@@ -69,7 +66,26 @@ class TodoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'todo' => 'required|string|max:255',
+            'completed' => 'required|boolean',
+        ]);
+
+        $token = session('api_token');
+
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer $token",
+            'Content-Type' => 'application/json',
+        ])->put("https://dummyjson.com/todos/{$id}", [
+            'todo' => $request->todo,
+            'completed' => $request->completed,
+        ]);
+
+        if ($response->successful()) {
+            return redirect()->route('home')->with('success', 'Tarea actualizada exitosamente!');
+        }
+
+        return redirect()->route('home')->with('error', 'Error al actualizar la tarea');
     }
 
     /**
@@ -77,6 +93,51 @@ class TodoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $token = session('api_token');
+
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer $token",
+        ])->delete("https://dummyjson.com/todos/{$id}");
+
+        if ($response->successful()) {
+            return redirect()->route('home')->with('success', 'Tarea eliminada exitosamente!');
+        }
+
+        return redirect()->route('home')->with('error', 'Error al eliminar la tarea');
+    }
+
+    /**
+     * Cambiar el estado de un todo
+     */
+    public function toggle(string $id)
+    {
+        $token = session('api_token');
+
+        // Obtener la tarea actual
+        $getCurrentResponse = Http::withHeaders([
+            'Authorization' => "Bearer $token",
+        ])->get("https://dummyjson.com/todos/{$id}");
+
+        if (!$getCurrentResponse->successful()) {
+            return redirect()->route('home')->with('error', 'Tarea no encontrada');
+        }
+
+        $currentTodo = $getCurrentResponse->json();
+        $newCompletedStatus = !$currentTodo['completed'];
+
+        // Actualizar el estado
+        $updateResponse = Http::withHeaders([
+            'Authorization' => "Bearer $token",
+            'Content-Type' => 'application/json',
+        ])->put("https://dummyjson.com/todos/{$id}", [
+            'completed' => $newCompletedStatus,
+        ]);
+
+        if ($updateResponse->successful()) {
+            $message = $newCompletedStatus ? 'Tarea marcada como completada!' : 'Tarea marcada como pendiente!';
+            return redirect()->route('home')->with('success', $message);
+        }
+
+        return redirect()->route('home')->with('error', 'Error al cambiar el estado de la tarea');
     }
 }

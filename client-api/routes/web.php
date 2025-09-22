@@ -15,12 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
 Route::get('login', [AuthController::class, 'index'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth.api')->group(function () {
     Route::get('/', [TodoController::class, 'index'])->name('home');
+    Route::post('todos', [TodoController::class, 'store'])->name('todos.store');
+    Route::put('todos/{id}', [TodoController::class, 'update'])->name('todos.update');
+    Route::delete('todos/{id}', [TodoController::class, 'destroy'])->name('todos.destroy');
+    Route::patch('todos/{id}/toggle', [TodoController::class, 'toggle'])->name('todos.toggle');
 });
-
